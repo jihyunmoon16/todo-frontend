@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, Timer } from 'lucide-react';
@@ -9,38 +10,38 @@ export function SignupPage() {
   const [nickname, setNickname] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-
-  const handleSignup = () => {
+  const handleSignup = async () => {
     // 입력 검증
     if (!email || !nickname || !password) {
-      setError('모든 필드를 입력해주세요.');
-      return;
+        setError('모든 필드를 입력해주세요.');
+        return;
     }
 
-    // 이메일 형식 간단 검증
     if (!email.includes('@')) {
-      setError('올바른 이메일 형식을 입력해주세요.');
-      return;
+        setError('올바른 이메일 형식을 입력해주세요.');
+        return;
     }
 
-    // 메모리에 사용자 정보 저장 (간단한 예시)
-    if (!window.userData) {
-      window.userData = [];
-    }
+    try {
+        // 백엔드로 회원가입 API 요청
+        await axios.post('http://localhost:8080/api/v1/auth/signup', {
+            email,
+            nickname,
+            password
+        });
 
-    // 중복 이메일 확인
-    const existingUser = window.userData.find((u) => u.email === email);
-    if (existingUser) {
-      setError('이미 등록된 이메일입니다.');
-      return;
+        alert('회원가입이 완료되었습니다! 로그인해주세요.');
+        navigate('/');
+    } catch (err) {
+        // 백엔드에서 오류 메시지가 있을 때 표시
+        if (err.response && err.response.data) {
+        setError(err.response.data.message || '회원가입 중 오류가 발생했습니다.');
+        } else {
+        setError('서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.');
+        }
     }
-
-    // 사용자 추가
-    window.userData.push({ email, nickname, password });
-    
-    alert('회원가입이 완료되었습니다! 로그인해주세요.');
-    navigate('/');
   };
+
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {

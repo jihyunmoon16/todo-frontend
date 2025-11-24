@@ -1,6 +1,6 @@
+import axios from 'axios'
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mail, Lock, Timer } from 'lucide-react';
 import './LoginPage.css';
 
 export function LoginPage() {
@@ -9,34 +9,42 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleLogin = () => {
-    // 입력 검증
+  const handleLogin = async () => {
     if (!email || !password) {
-      setError('이메일과 비밀번호를 입력해주세요.');
-      return;
+        setError('이메일과 비밀번호를 입력해주세요.');
+        return;
     }
 
-    // 메모리에서 사용자 정보 가져오기 (간단한 예시)
-    // 실제로는 API 호출이나 다른 상태 관리 방법 사용
-    const savedUsers = window.userData || [];
-    const user = savedUsers.find(
-      (u) => u.email === email && u.password === password
-    );
+    try {
+        const response = await axios.post(
+        'http://localhost:8080/api/v1/auth/login',
+        { email, password }
+        );
 
-    if (user) {
-      alert(`환영합니다, ${user.nickname}님!`);
-      // 로그인 성공 후 처리 (예: 메인 페이지로 이동)
-      // navigate('/dashboard');
-    } else {
-      setError('이메일 또는 비밀번호가 일치하지 않습니다.');
+        // 백엔드에서 JWT 토큰이 온다고 가정
+        const { token } = response.data;
+
+        // 토큰 저장 (전역 상태는 나중에 필요하면 리덕스/리코일 등 사용)
+        localStorage.setItem('token', token);
+
+        // 로그인 성공 후 이동
+        navigate('/todo');
+    } catch (err) {
+        if (err.response && err.response.data) {
+        setError(err.response.data.message || '로그인에 실패했습니다.');
+        } else {
+        setError('서버와 통신할 수 없습니다.');
+        }
     }
   };
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
-      handleLogin();
+        handleLogin();
     }
   };
+
+
 
   return (
     <div className="login-page-container">
@@ -44,7 +52,7 @@ export function LoginPage() {
         <div className="login-page-header">
           <div className="login-page-icon">
             <div className="icon-wrapper">
-              <Timer className="icon" />
+              <span className="icon-emoji">⏰</span>
             </div>
           </div>
           <h1 className="title">생산성 앱</h1>
@@ -68,7 +76,7 @@ export function LoginPage() {
               <div className="form-group">
                 <label htmlFor="email">이메일</label>
                 <div className="input-wrapper">
-                  <Mail className="input-icon" />
+                  <span className="input-icon">📧</span>
                   <input
                     id="email"
                     type="email"
@@ -84,7 +92,7 @@ export function LoginPage() {
               <div className="form-group">
                 <label htmlFor="password">비밀번호</label>
                 <div className="input-wrapper">
-                  <Lock className="input-icon" />
+                  <span className="input-icon">🔒</span>
                   <input
                     id="password"
                     type="password"
