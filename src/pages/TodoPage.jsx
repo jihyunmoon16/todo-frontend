@@ -1,9 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectToken, logout as logoutAction } from '../store/authSlice';
+import axiosInstance from '../api/axios';
 import './TodoPage.css';
 
 export function TodoPage() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const token = useSelector(selectToken); // Redux에서 토큰 가져오기
+  
   const [todos, setTodos] = useState([]);
   const [title, setTitle] = useState('');
   const [selectedQuadrant, setSelectedQuadrant] = useState(null);
@@ -13,7 +19,6 @@ export function TodoPage() {
   const [pomodoroTime, setPomodoroTime] = useState(25 * 60);
   const [isRunning, setIsRunning] = useState(false);
   const [pomodoroMode, setPomodoroMode] = useState('work');
-  const [token, setToken] = useState('');
 
   // 4분면 정의
   const quadrants = [
@@ -39,30 +44,20 @@ export function TodoPage() {
     }
   };
 
-  // 토큰 로드 및 할 일 목록 가져오기
+  // 토큰이 있으면 할 일 목록 가져오기
   useEffect(() => {
-    const savedToken = window.authToken || localStorage.getItem('authToken');
-    if (savedToken) {
-      setToken(savedToken);
-      fetchTodos(savedToken);
+    if (token) {
+      fetchTodos();
     }
-  }, []);
+  }, [token]);
 
   // 할 일 목록 가져오기
-  const fetchTodos = async (authToken) => {
+  const fetchTodos = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/v1/todos', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${authToken}`
-        }
-      });
+      // 인터셉터가 자동으로 토큰 추가
+      const response = await axiosInstance.get('/todos');
 
-      if (!response.ok) {
-        throw new Error('할 일 목록을 불러오는데 실패했습니다.');
-      }
-
-      const data = await response.json();
+      const data = response.data;
       
       // 백엔드 데이터를 프론트엔드 형식으로 변환
       const formattedTodos = data.map(todo => ({
@@ -98,23 +93,13 @@ export function TodoPage() {
     try {
       const selectedQuadrantInfo = quadrants.find(q => q.id === selectedQuadrant);
       
-      const response = await fetch('http://localhost:8080/api/v1/todos', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          title: title.trim(),
-          priority: selectedQuadrantInfo.priority
-        })
+      // 인터셉터가 자동으로 토큰과 헤더 추가
+      const response = await axiosInstance.post('/todos', {
+        title: title.trim(),
+        priority: selectedQuadrantInfo.priority
       });
 
-      if (!response.ok) {
-        throw new Error('할 일 추가에 실패했습니다.');
-      }
-
-      const newTodo = await response.json();
+      const newTodo = response.data;
       const formattedTodo = {
         id: newTodo.id,
         title: newTodo.title,
@@ -152,16 +137,8 @@ export function TodoPage() {
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/v1/todos/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('할 일 삭제에 실패했습니다.');
-      }
+      // 인터셉터가 자동으로 토큰 추가
+      await axiosInstance.delete(`/todos/${id}`);
 
       // 성공 시 로컬 state에서도 제거
       setTodos(todos.filter(todo => todo.id !== id));
@@ -217,10 +194,13 @@ export function TodoPage() {
 
   const handleLogout = () => {
     if (window.confirm('로그아웃 하시겠습니까?')) {
-      window.authToken = null;
-      localStorage.removeItem('authToken');
+      // Redux에서 토큰 제거
+      dispatch(logoutAction());
+      
+      // 상태 초기화
       setTodos([]);
-      setToken('');
+      
+      // 로그인 페이지로 이동
       navigate('/');
     }
   };
@@ -440,7 +420,7 @@ export function TodoPage() {
             </button>
 
             <div className="pomodoro-header">
-              <h2>🌙 뽀모도로 타이머</h2>
+              <h2>🍅 뽀모도로 타이머</h2>
               <p className="pomodoro-todo-title">{selectedTodo.title}</p>
             </div>
 

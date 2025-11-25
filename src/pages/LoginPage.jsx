@@ -1,50 +1,64 @@
-import axios from 'axios'
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '../store/authSlice';
 import './LoginPage.css';
 
 export function LoginPage() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   const handleLogin = async () => {
+    // 입력 검증
     if (!email || !password) {
-        setError('이메일과 비밀번호를 입력해주세요.');
-        return;
+      setError('이메일과 비밀번호를 입력해주세요.');
+      return;
     }
 
     try {
-        const response = await axios.post(
-        'http://localhost:8080/api/v1/auth/login',
-        { email, password }
-        );
+      // 백엔드 로그인 API 호출
+      const response = await fetch('http://localhost:8080/api/v1/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password
+        })
+      });
 
-        // 백엔드에서 JWT 토큰이 온다고 가정
-        const { token } = response.data;
+      if (!response.ok) {
+        throw new Error('로그인에 실패했습니다.');
+      }
 
-        // 토큰 저장 (전역 상태는 나중에 필요하면 리덕스/리코일 등 사용)
-        localStorage.setItem('token', token);
-
-        // 로그인 성공 후 이동
-        navigate('/todo');
-    } catch (err) {
-        if (err.response && err.response.data) {
-        setError(err.response.data.message || '로그인에 실패했습니다.');
-        } else {
-        setError('서버와 통신할 수 없습니다.');
+      const data = await response.json();
+      
+      // Redux에 토큰과 사용자 정보 저장
+      dispatch(setCredentials({
+        token: data.token, // 또는 data.accessToken
+        user: {
+          email: email,
+          nickname: data.nickname || data.name
         }
+      }));
+
+      // Todo 페이지로 이동
+      navigate('/todo');
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('이메일 또는 비밀번호가 일치하지 않습니다.');
     }
   };
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
-        handleLogin();
+      handleLogin();
     }
   };
-
-
 
   return (
     <div className="login-page-container">
