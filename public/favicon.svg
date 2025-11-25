@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Star positioned inside a crescent moon on a night sky">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="30%" r="80%">
+      <stop offset="0%" stop-color="#0b1633"/>
+      <stop offset="100%" stop-color="#021029"/>
+    </radialGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE77A"/>
+      <stop offset="60%" stop-color="#FFC857"/>
+      <stop offset="100%" stop-color="#FFB200"/>
+    </linearGradient>
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="100%" height="100%" fill="url(#bgGrad)"/>
+
+  <!-- Faint background stars -->
+  <g opacity="0.45">
+    <circle cx="900" cy="120" r="1.6" fill="#ffffff" />
+    <circle cx="760" cy="90" r="1.2" fill="#ffffff" />
+    <circle cx="180" cy="120" r="1.6" fill="#ffffff" />
+    <circle cx="320" cy="60" r="1.4" fill="#ffffff" />
+    <circle cx="540" cy="200" r="1.2" fill="#ffffff" />
+  </g>
+
+  <!-- Crescent moon (centered slightly right) -->
+  <g id="crescent" transform="translate(600,512)">
+    <!-- Outer circle (visible moon) -->
+    <circle cx="0" cy="0" r="180" fill="url(#goldGrad)" filter="url(#softGlow)" />
+    <!-- Inner cut circle shifted right to create crescent opening to the left -->
+    <circle cx="70" cy="0" r="150" fill="#021029"/>
+    <!-- Soft rim -->
+    <circle cx="0" cy="0" r="180" fill="none" stroke="#FFD66B" stroke-opacity="0.12" stroke-width="10"/>
+  </g>
+
+  <!-- Star positioned inside the crescent (in the concave area) -->
+  <g transform="translate(525,512)">
+    <!-- Star glow -->
+    <circle cx="0" cy="0" r="48" fill="#FFD66B" opacity="0.14"/>
+    <!-- Star shape -->
+    <path d="M0 -64 L14 -22 L64 -22 L20 4 L36 64 L0 26 L-36 64 L-20 4 L-64 -22 L-14 -22 Z"
+          fill="#FFF6B8" stroke="#FFD66B" stroke-width="2" filter="url(#softGlow)"/>
+  </g>
+
+  <!-- Small accent star -->
+  <g transform="translate(700,420)">
+    <path d="M0 -10 L2 -4 L10 -4 L4 0 L6 8 L0 3 L-6 8 L-4 0 L-10 -4 L-2 -4 Z"
+          fill="#FFF7CC" opacity="0.95"/>
+  </g>
+
+  <!-- Subtle vignette -->
+  <rect width="100%" height="100%" fill="black" opacity="0.05"/>
+</svg>
