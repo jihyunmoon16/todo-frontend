@@ -1,9 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+// localStorage에서 토큰 복구
+const loadTokenFromStorage = () => {
+  try {
+    const token = localStorage.getItem('authToken');
+    return token || null;
+  } catch (error) {
+    return null;
+  }
+};
+
 const initialState = {
-  token: null,
+  token: loadTokenFromStorage(), // 초기 로드 시 localStorage에서 가져오기
   user: null,
-  isAuthenticated: false
+  isAuthenticated: !!loadTokenFromStorage()
 };
 
 const authSlice = createSlice({
@@ -15,11 +25,17 @@ const authSlice = createSlice({
       state.token = token;
       state.user = user;
       state.isAuthenticated = true;
+      
+      // localStorage에 토큰 저장
+      localStorage.setItem('authToken', token);
     },
     logout: (state) => {
       state.token = null;
       state.user = null;
       state.isAuthenticated = false;
+      
+      // localStorage에서 토큰 제거
+      localStorage.removeItem('authToken');
     }
   }
 });
