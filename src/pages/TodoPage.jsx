@@ -8,7 +8,7 @@ import './TodoPage.css';
 export function TodoPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const token = useSelector(selectToken); // Redux에서 토큰 가져오기
+  const token = useSelector(selectToken);
   
   const [todos, setTodos] = useState([]);
   const [title, setTitle] = useState('');
@@ -54,12 +54,9 @@ export function TodoPage() {
   // 할 일 목록 가져오기
   const fetchTodos = async () => {
     try {
-      // 인터셉터가 자동으로 토큰 추가
       const response = await axiosInstance.get('/todos');
-
       const data = response.data;
       
-      // 백엔드 데이터를 프론트엔드 형식으로 변환
       const formattedTodos = data.map(todo => ({
         id: todo.id,
         title: todo.title,
@@ -93,7 +90,6 @@ export function TodoPage() {
     try {
       const selectedQuadrantInfo = quadrants.find(q => q.id === selectedQuadrant);
       
-      // 인터셉터가 자동으로 토큰과 헤더 추가
       const response = await axiosInstance.post('/todos', {
         title: title.trim(),
         priority: selectedQuadrantInfo.priority
@@ -137,10 +133,7 @@ export function TodoPage() {
     }
 
     try {
-      // 인터셉터가 자동으로 토큰 추가
       await axiosInstance.delete(`/todos/${id}`);
-
-      // 성공 시 로컬 state에서도 제거
       setTodos(todos.filter(todo => todo.id !== id));
       alert('할 일이 삭제되었습니다! 🗑️');
     } catch (error) {
@@ -194,17 +187,59 @@ export function TodoPage() {
 
   const handleLogout = () => {
     if (window.confirm('로그아웃 하시겠습니까?')) {
-      // Redux에서 토큰 제거
       dispatch(logoutAction());
-      
-      // 상태 초기화
       setTodos([]);
-      
-      // 로그인 페이지로 이동
       navigate('/');
     }
   };
 
+  // 뽀모도로 완료 시 백엔드에 시간 전송
+  const handlePomodoroComplete = async () => {
+    const duration = pomodoroMode === 'work' ? 25 : 5;
+    
+    // Untitled는 백엔드에 저장하지 않음
+    if (!selectedTodo || selectedTodo.id === 'untitled') {
+      alert(pomodoroMode === 'work' ? '🎉 뽀모도로 완료! 휴식 시간입니다.' : '✨ 휴식 완료! 다시 집중할 시간입니다.');
+      
+      // 집중 완료 시 자동으로 휴식 모드로 전환
+      if (pomodoroMode === 'work') {
+        setPomodoroMode('break');
+        setPomodoroTime(5 * 60);
+      }
+      return;
+    }
+
+    try {
+      console.log('🚀 백엔드 호출:', `/todos/${selectedTodo.id}/pomodoros`, { duration });
+      
+      await axiosInstance.post(`/todos/${selectedTodo.id}/pomodoros`, {
+        duration: duration
+      });
+
+      alert(pomodoroMode === 'work' 
+        ? `🎉 뽀모도로 완료! ${duration}분이 기록되었습니다. 휴식 시간입니다.` 
+        : '✨ 휴식 완료! 다시 집중할 시간입니다.');
+      
+      // 집중 완료 시 자동으로 휴식 모드로 전환
+      if (pomodoroMode === 'work') {
+        setPomodoroMode('break');
+        setPomodoroTime(5 * 60);
+      }
+    } catch (error) {
+      console.error('❌ Error saving pomodoro:', error);
+      alert(pomodoroMode === 'work' 
+        ? '🎉 뽀모도로 완료! (기록 저장 실패)' 
+        : '✨ 휴식 완료!');
+      
+      // 에러가 나도 휴식 모드로 전환
+      if (pomodoroMode === 'work') {
+        setPomodoroMode('break');
+        setPomodoroTime(5 * 60);
+      }
+    }
+  };
+
+  // 타이머 실행
   useEffect(() => {
     let interval = null;
     if (isRunning && pomodoroTime > 0) {
@@ -212,12 +247,14 @@ export function TodoPage() {
         setPomodoroTime((time) => {
           if (time <= 1) {
             setIsRunning(false);
-            alert(pomodoroMode === 'work' ? '🎉 뽀모도로 완료! 휴식 시간입니다.' : '✨ 휴식 완료! 다시 집중할 시간입니다.');
             return 0;
           }
           return time - 1;
         });
       }, 1000);
+    } else if (pomodoroTime === 0 && !isRunning) {
+      console.log('⏰ 타이머 완료! 백엔드 호출 시작...');
+      handlePomodoroComplete();
     }
     return () => clearInterval(interval);
   }, [isRunning, pomodoroTime, pomodoroMode]);
@@ -420,7 +457,7 @@ export function TodoPage() {
             </button>
 
             <div className="pomodoro-header">
-              <h2>🍅 뽀모도로 타이머</h2>
+              <h2>🌙 뽀모도로 타이머</h2>
               <p className="pomodoro-todo-title">{selectedTodo.title}</p>
             </div>
 
