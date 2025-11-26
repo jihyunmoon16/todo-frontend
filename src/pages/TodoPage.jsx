@@ -63,6 +63,7 @@ export function TodoPage() {
         description: todo.description,
         priority: todo.priority,
         completed: todo.completed,
+        pomodoroTime: todo.pomodoroTime || 0, // 뽀모도로 시간 추가
         quadrant: priorityToQuadrant(todo.priority)
       }));
 
@@ -102,6 +103,7 @@ export function TodoPage() {
         description: newTodo.description,
         priority: newTodo.priority,
         completed: newTodo.completed,
+        pomodoroTime: newTodo.pomodoroTime || 0,
         quadrant: priorityToQuadrant(newTodo.priority)
       };
       
@@ -344,6 +346,7 @@ export function TodoPage() {
               </div>
               {getSortedTodos().map(todo => {
                 const quadrantInfo = getQuadrantInfo(todo.quadrant);
+                console.log('Todo:', todo); // 디버깅용
                 return (
                   <div key={todo.id} className="todo-list-item">
                     <div className="todo-item-main">
@@ -367,6 +370,9 @@ export function TodoPage() {
                             }}
                           >
                             {quadrantInfo.emoji} {quadrantInfo.name}
+                          </span>
+                          <span className="pomodoro-time-badge">
+                            🌙 {todo.pomodoroTime || 0}분
                           </span>
                         </div>
                       </div>
