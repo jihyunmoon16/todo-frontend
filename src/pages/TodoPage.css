@@ -60,7 +60,7 @@
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
-/* 할 일 리스트 */
+/* Todo List */
 .todo-list-container {
   max-width: 900px;
   margin: 3rem auto 0;
@@ -253,7 +253,7 @@
   transform: scale(1.1);
 }
 
-/* 중앙 뽀모도로 시작 섹션 */
+/* Center Pomodoro Start Section */
 .center-pomodoro-section {
   padding: 4rem 0 2rem;
   display: flex;
@@ -268,7 +268,7 @@
   background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fbbf24 100%);
   border-radius: 50%;
   padding: 3rem 2.5rem;
-  box-shadow: 
+  box-shadow:
     0 0 60px rgba(251, 191, 36, 0.4),
     inset -20px -20px 40px rgba(217, 119, 6, 0.3),
     inset 20px 20px 40px rgba(254, 243, 199, 0.5);
@@ -291,21 +291,24 @@
   border-radius: 50%;
   top: 15%;
   left: 20%;
-  box-shadow: 
+  box-shadow:
     120px 40px 0 rgba(217, 119, 6, 0.1),
     60px 120px 0 rgba(217, 119, 6, 0.12),
     200px 100px 0 rgba(217, 119, 6, 0.08);
 }
 
 @keyframes moonGlow {
-  0%, 100% {
-    box-shadow: 
+
+  0%,
+  100% {
+    box-shadow:
       0 0 60px rgba(251, 191, 36, 0.4),
       inset -20px -20px 40px rgba(217, 119, 6, 0.3),
       inset 20px 20px 40px rgba(254, 243, 199, 0.5);
   }
+
   50% {
-    box-shadow: 
+    box-shadow:
       0 0 80px rgba(251, 191, 36, 0.6),
       inset -20px -20px 40px rgba(217, 119, 6, 0.4),
       inset 20px 20px 40px rgba(254, 243, 199, 0.7);
@@ -322,9 +325,12 @@
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0) rotate(-5deg);
   }
+
   50% {
     transform: translateY(-10px) rotate(-5deg);
   }
@@ -416,12 +422,12 @@
   transform: translateY(0);
 }
 
-/* 4분면 그리드 제거 */
+/* Remove Quadrant Grid */
 .quadrant-grid {
   display: none;
 }
 
-/* 모달 */
+/* Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -440,6 +446,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -460,6 +467,7 @@
     transform: translateY(20px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -572,7 +580,7 @@
   background-color: #2563eb;
 }
 
-/* 뽀모도로 타이머 모달 */
+/* Pomodoro Timer Modal */
 .pomodoro-modal {
   background: white;
   border-radius: 1.5rem;
@@ -740,7 +748,7 @@
   background-color: #e5e7eb;
 }
 
-/* 반응형 */
+/* Responsive */
 @media (max-width: 768px) {
   .todo-page {
     padding: 1rem;

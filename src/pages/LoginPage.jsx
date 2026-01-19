@@ -12,14 +12,14 @@ export function LoginPage() {
   const [error, setError] = useState('');
 
   const handleLogin = async () => {
-    // 입력 검증
+    // Input validation
     if (!email || !password) {
-      setError('이메일과 비밀번호를 입력해주세요.');
+      setError('Please enter your email and password.');
       return;
     }
 
     try {
-      // 백엔드 로그인 API 호출
+      // Backend Login API call
       const response = await fetch('http://localhost:8080/api/v1/auth/login', {
         method: 'POST',
         headers: {
@@ -32,25 +32,25 @@ export function LoginPage() {
       });
 
       if (!response.ok) {
-        throw new Error('로그인에 실패했습니다.');
+        throw new Error('Login failed.');
       }
 
       const data = await response.json();
-      
-      // Redux에 토큰과 사용자 정보 저장
+
+      // Store token and user info in Redux
       dispatch(setCredentials({
-        token: data.token, // 또는 data.accessToken
+        token: data.token, // or data.accessToken
         user: {
           email: email,
           nickname: data.nickname || data.name
         }
       }));
 
-      // Todo 페이지로 이동
+      // Navigate to Todo page
       navigate('/todo');
     } catch (error) {
       console.error('Login error:', error);
-      setError('이메일 또는 비밀번호가 일치하지 않습니다.');
+      setError('Invalid email or password.');
     }
   };
 
@@ -69,17 +69,17 @@ export function LoginPage() {
               <span className="icon-emoji">⏰</span>
             </div>
           </div>
-          <h1 className="title">생산성 앱</h1>
+          <h1 className="title">Productivity App</h1>
           <p className="subtitle">
-            뽀모도로 기법으로 집중하고, 할 일을 관리하세요
+            Focus with the Pomodoro technique and manage your tasks
           </p>
         </div>
 
         <div className="login-card">
           <div className="card-header">
-            <h2 className="card-title">로그인</h2>
+            <h2 className="card-title">Login</h2>
             <p className="card-description">
-              계정에 로그인하여 생산성을 높여보세요
+              Log in to your account to boost your productivity
             </p>
           </div>
 
@@ -88,7 +88,7 @@ export function LoginPage() {
 
             <div className="login-form">
               <div className="form-group">
-                <label htmlFor="email">이메일</label>
+                <label htmlFor="email">Email</label>
                 <div className="input-wrapper">
                   <span className="input-icon">📧</span>
                   <input
@@ -104,7 +104,7 @@ export function LoginPage() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="password">비밀번호</label>
+                <label htmlFor="password">Password</label>
                 <div className="input-wrapper">
                   <span className="input-icon">🔒</span>
                   <input
@@ -120,18 +120,18 @@ export function LoginPage() {
               </div>
 
               <button onClick={handleLogin} className="submit-button">
-                로그인
+                Login
               </button>
             </div>
 
             <div className="switch-page">
               <p className="switch-text">
-                계정이 없으신가요?{' '}
+                Don't have an account?{' '}
                 <button
                   onClick={() => navigate('/signup')}
                   className="switch-link"
                 >
-                  회원가입
+                  Sign up
                 </button>
               </p>
             </div>
@@ -139,7 +139,7 @@ export function LoginPage() {
         </div>
 
         <p className="login-page-footer">
-          안전하고 생산적인 작업 환경을 위해 보안을 유지하세요
+          Maintain security for a safe and productive work environment
         </p>
       </div>
     </div>

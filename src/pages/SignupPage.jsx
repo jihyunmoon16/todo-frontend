@@ -11,34 +11,34 @@ export function SignupPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const handleSignup = async () => {
-    // 입력 검증
+    // Input validation
     if (!email || !nickname || !password) {
-        setError('모든 필드를 입력해주세요.');
-        return;
+      setError('Please fill in all fields.');
+      return;
     }
 
     if (!email.includes('@')) {
-        setError('올바른 이메일 형식을 입력해주세요.');
-        return;
+      setError('Please enter a valid email address.');
+      return;
     }
 
     try {
-        // 백엔드로 회원가입 API 요청
-        await axios.post('http://localhost:8080/api/v1/auth/signup', {
-            email,
-            nickname,
-            password
-        });
+      // Backend Signup API request
+      await axios.post('http://localhost:8080/api/v1/auth/signup', {
+        email,
+        nickname,
+        password
+      });
 
-        alert('회원가입이 완료되었습니다! 로그인해주세요.');
-        navigate('/');
+      alert('Sign up successful! Please log in.');
+      navigate('/');
     } catch (err) {
-        // 백엔드에서 오류 메시지가 있을 때 표시
-        if (err.response && err.response.data) {
-        setError(err.response.data.message || '회원가입 중 오류가 발생했습니다.');
-        } else {
-        setError('서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.');
-        }
+      // Display error message from backend if available
+      if (err.response && err.response.data) {
+        setError(err.response.data.message || 'An error occurred during sign up.');
+      } else {
+        setError('Cannot connect to the server. Please try again later.');
+      }
     }
   };
 
@@ -58,17 +58,17 @@ export function SignupPage() {
               <Timer className="icon" />
             </div>
           </div>
-          <h1 className="title">생산성 앱</h1>
+          <h1 className="title">Productivity App</h1>
           <p className="subtitle">
-            지금 바로 시작하세요
+            Get started right now
           </p>
         </div>
 
         <div className="signup-card">
           <div className="card-header">
-            <h2 className="card-title">회원가입</h2>
+            <h2 className="card-title">Sign Up</h2>
             <p className="card-description">
-              새 계정을 만들어 생산성을 높여보세요
+              Create a new account to boost your productivity
             </p>
           </div>
 
@@ -77,7 +77,7 @@ export function SignupPage() {
 
             <div className="signup-form">
               <div className="form-group">
-                <label htmlFor="email">이메일</label>
+                <label htmlFor="email">Email</label>
                 <div className="input-wrapper">
                   <Mail className="input-icon" />
                   <input
@@ -93,13 +93,13 @@ export function SignupPage() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="nickname">닉네임</label>
+                <label htmlFor="nickname">Nickname</label>
                 <div className="input-wrapper">
                   <User className="input-icon" />
                   <input
                     id="nickname"
                     type="text"
-                    placeholder="홍길동"
+                    placeholder="John Doe"
                     value={nickname}
                     onChange={(e) => setNickname(e.target.value)}
                     onKeyPress={handleKeyPress}
@@ -109,7 +109,7 @@ export function SignupPage() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="password">비밀번호</label>
+                <label htmlFor="password">Password</label>
                 <div className="input-wrapper">
                   <Lock className="input-icon" />
                   <input
@@ -125,18 +125,18 @@ export function SignupPage() {
               </div>
 
               <button onClick={handleSignup} className="submit-button">
-                회원가입
+                Sign Up
               </button>
             </div>
 
             <div className="switch-page">
               <p className="switch-text">
-                이미 계정이 있으신가요?{' '}
+                Already have an account?{' '}
                 <button
                   onClick={() => navigate('/')}
                   className="switch-link"
                 >
-                  로그인
+                  Login
                 </button>
               </p>
             </div>
@@ -144,7 +144,7 @@ export function SignupPage() {
         </div>
 
         <p className="signup-page-footer">
-          안전하고 생산적인 작업 환경을 위해 보안을 유지하세요
+          Maintain security for a safe and productive work environment
         </p>
       </div>
     </div>
