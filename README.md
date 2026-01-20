@@ -115,7 +115,7 @@ npm run dev
 <!-- 포트폴리오용 스크린샷을 여기에 추가하세요 -->
 | 로그인 화면 | 할 일 대시보드 |
 |:---:|:---:|
-| <img src="" alt="Login Page" width="400"/> | <img src="" alt="Todo Dashboard" width="400"/> |
+| <img src="https://github.com/user-attachments/assets/ede7a8d8-e8c1-4abd-9f18-022ca965540a" alt="Login Page" width="400"/> | <img src="" alt="Todo Dashboard" width="400"/> |
 
 | 뽀모도로 타이머 | 우선순위 설정 |
 |:---:|:---:|
@@ -124,4 +124,4 @@ npm run dev
 ---
 
 ## 🔗 관련 프로젝트 (Related Project)
--   **Backend Repository**: [링크 업데이트 필요] (Spring Boot API Server)
+-   **Backend Repository**: (Spring Boot API Server)
