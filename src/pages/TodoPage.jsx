@@ -118,10 +118,20 @@ export function TodoPage() {
     }
   };
 
-  const handleToggleTodo = (id) => {
-    setTodos(todos.map(todo =>
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
+  const handleToggleTodo = async (id) => {
+    const todo = todos.find(t => t.id === id);
+    const previousTodos = [...todos];
+
+    setTodos(todos.map(t =>
+      t.id === id ? { ...t, completed: !t.completed } : t
     ));
+
+    try {
+      await axiosInstance.patch(`/todos/${id}`, { completed: !todo.completed });
+    } catch (error) {
+      setTodos(previousTodos);
+      alert('변경에 실패했습니다.');
+    }
   };
 
   const handleDeleteTodo = async (id) => {
