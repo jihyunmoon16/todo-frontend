@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '../store/authSlice';
+import axiosInstance from '../api/axios';
 import './LoginPage.css';
 
 export function LoginPage() {
@@ -20,22 +21,12 @@ export function LoginPage() {
 
     try {
       // Backend Login API call
-      const response = await fetch('http://localhost:8080/api/v1/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password
-        })
+      const response = await axiosInstance.post('/auth/login', {
+        email: email,
+        password: password
       });
 
-      if (!response.ok) {
-        throw new Error('Login failed.');
-      }
-
-      const data = await response.json();
+      const data = response.data;
 
       // Store token and user info in Redux
       dispatch(setCredentials({
@@ -69,7 +60,7 @@ export function LoginPage() {
               <span className="icon-emoji">⏰</span>
             </div>
           </div>
-          <h1 className="title">Productivity App</h1>
+          <h1 className="title">PhaseTheDay</h1>
           <p className="subtitle">
             Focus with the Pomodoro technique and manage your tasks
           </p>

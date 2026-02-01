@@ -22,10 +22,10 @@ export function TodoPage() {
 
   // 4 Quadrants Definition
   const quadrants = [
-    { id: 1, name: 'Urgent & Important', color: '#ef4444', emoji: '🔥', priority: 'CRITICAL' },
-    { id: 2, name: 'Important but Not Urgent', color: '#3b82f6', emoji: '⭐', priority: 'HIGH' },
-    { id: 3, name: 'Urgent but Not Important', color: '#f59e0b', emoji: '⚡', priority: 'MEDIUM' },
-    { id: 4, name: 'Not Urgent & Not Important', color: '#6b7280', emoji: '📝', priority: 'LOW' }
+    { id: 1, name: 'Urgent & Important', color: '#ef4444', emoji: '🌕', priority: 'CRITICAL' },
+    { id: 2, name: 'Important but Not Urgent', color: '#3b82f6', emoji: '🌔', priority: 'HIGH' },
+    { id: 3, name: 'Urgent but Not Important', color: '#f59e0b', emoji: '🌓', priority: 'MEDIUM' },
+    { id: 4, name: 'Not Urgent & Not Important', color: '#6b7280', emoji: '🌒', priority: 'LOW' }
   ];
 
   // Convert Priority to Quadrant
@@ -111,7 +111,7 @@ export function TodoPage() {
       setTitle('');
       setSelectedQuadrant(null);
       setShowAddModal(false);
-      alert('Todo added successfully! ✅');
+      alert('Todo added successfully! 🌙');
     } catch (error) {
       console.error('Error adding todo:', error);
       alert('Error adding todo.');
@@ -147,7 +147,7 @@ export function TodoPage() {
     try {
       await axiosInstance.delete(`/todos/${id}`);
       setTodos(todos.filter(todo => todo.id !== id));
-      alert('Todo deleted! 🗑️');
+      alert('Todo deleted! 🌑');
     } catch (error) {
       console.error('Error deleting todo:', error);
       alert('Error deleting todo.');
@@ -294,7 +294,7 @@ export function TodoPage() {
     <div className="todo-page">
       {/* Header */}
       <div className="todo-header">
-        <h1>📋 Todo Management</h1>
+        <h1>📋 PhaseTheDay</h1>
         <div className="header-actions">
           <button className="add-todo-btn" onClick={() => setShowAddModal(true)}>
             ➕ Add Todo

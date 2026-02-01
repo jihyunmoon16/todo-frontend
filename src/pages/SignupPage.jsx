@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axiosInstance from '../api/axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, Timer } from 'lucide-react';
@@ -24,7 +24,7 @@ export function SignupPage() {
 
     try {
       // Backend Signup API request
-      await axios.post('http://localhost:8080/api/v1/auth/signup', {
+      await axiosInstance.post('/auth/signup', {
         email,
         nickname,
         password
@@ -58,7 +58,7 @@ export function SignupPage() {
               <Timer className="icon" />
             </div>
           </div>
-          <h1 className="title">Productivity App</h1>
+          <h1 className="title">PhaseTheDay</h1>
           <p className="subtitle">
             Get started right now
           </p>
