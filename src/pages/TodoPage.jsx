@@ -3,12 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectToken, logout as logoutAction } from '../store/authSlice';
 import axiosInstance from '../api/axios';
+import { useToast } from '../components/Toast';
+import { useConfirmDialog } from '../components/ConfirmDialog';
 import './TodoPage.css';
 
 export function TodoPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const token = useSelector(selectToken);
+  const { showToast } = useToast();
+  const { showConfirm, ConfirmDialog } = useConfirmDialog();
 
   const [todos, setTodos] = useState([]);
   const [title, setTitle] = useState('');
@@ -20,12 +24,18 @@ export function TodoPage() {
   const [isRunning, setIsRunning] = useState(false);
   const [pomodoroMode, setPomodoroMode] = useState('work');
 
+  // Loading states
+  const [isLoadingTodos, setIsLoadingTodos] = useState(true);
+  const [isAddingTodo, setIsAddingTodo] = useState(false);
+  const [deletingTodoId, setDeletingTodoId] = useState(null);
+  const [formError, setFormError] = useState('');
+
   // 4 Quadrants Definition
   const quadrants = [
-    { id: 1, name: 'Urgent & Important', color: '#ef4444', emoji: '🌕', priority: 'CRITICAL' },
-    { id: 2, name: 'Important but Not Urgent', color: '#3b82f6', emoji: '🌔', priority: 'HIGH' },
-    { id: 3, name: 'Urgent but Not Important', color: '#f59e0b', emoji: '🌓', priority: 'MEDIUM' },
-    { id: 4, name: 'Not Urgent & Not Important', color: '#6b7280', emoji: '🌒', priority: 'LOW' }
+    { id: 1, name: 'Urgent & Important', color: '#ef4444', emoji: '\u{1F315}', priority: 'CRITICAL' },
+    { id: 2, name: 'Important but Not Urgent', color: '#3b82f6', emoji: '\u{1F314}', priority: 'HIGH' },
+    { id: 3, name: 'Urgent but Not Important', color: '#f59e0b', emoji: '\u{1F313}', priority: 'MEDIUM' },
+    { id: 4, name: 'Not Urgent & Not Important', color: '#6b7280', emoji: '\u{1F312}', priority: 'LOW' }
   ];
 
   // Convert Priority to Quadrant
@@ -53,6 +63,7 @@ export function TodoPage() {
 
   // Fetch todos from backend
   const fetchTodos = async () => {
+    setIsLoadingTodos(true);
     try {
       const response = await axiosInstance.get('/todos');
       const data = response.data;
@@ -63,31 +74,35 @@ export function TodoPage() {
         description: todo.description,
         priority: todo.priority,
         completed: todo.completed,
-        pomodoroTime: todo.pomodoroTime || 0, // Add pomodoro time
+        pomodoroTime: todo.pomodoroTime || 0,
         quadrant: priorityToQuadrant(todo.priority)
       }));
 
       setTodos(formattedTodos);
     } catch (error) {
       console.error('Error fetching todos:', error);
-      alert('Error fetching todo list.');
+      showToast('Error fetching todo list.', 'error');
+    } finally {
+      setIsLoadingTodos(false);
     }
   };
 
   const handleAddTodo = async () => {
+    setFormError('');
     if (!title.trim()) {
-      alert('Please enter a todo title.');
+      setFormError('Please enter a todo title.');
       return;
     }
     if (!selectedQuadrant) {
-      alert('Please select a priority.');
+      setFormError('Please select a priority.');
       return;
     }
     if (!token) {
-      alert('Login required.');
+      showToast('Login required.', 'error');
       return;
     }
 
+    setIsAddingTodo(true);
     try {
       const selectedQuadrantInfo = quadrants.find(q => q.id === selectedQuadrant);
 
@@ -110,11 +125,14 @@ export function TodoPage() {
       setTodos([...todos, formattedTodo]);
       setTitle('');
       setSelectedQuadrant(null);
+      setFormError('');
       setShowAddModal(false);
-      alert('Todo added successfully! 🌙');
+      showToast('Todo added successfully!', 'success');
     } catch (error) {
       console.error('Error adding todo:', error);
-      alert('Error adding todo.');
+      showToast('Error adding todo.', 'error');
+    } finally {
+      setIsAddingTodo(false);
     }
   };
 
@@ -130,27 +148,29 @@ export function TodoPage() {
       await axiosInstance.patch(`/todos/${id}`, { completed: !todo.completed });
     } catch (error) {
       setTodos(previousTodos);
-      alert('변경에 실패했습니다.');
+      showToast('Failed to update todo.', 'error');
     }
   };
 
   const handleDeleteTodo = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this todo?')) {
-      return;
-    }
+    const ok = await showConfirm('Are you sure you want to delete this todo?', 'Delete Todo');
+    if (!ok) return;
 
     if (!token) {
-      alert('Login required.');
+      showToast('Login required.', 'error');
       return;
     }
 
+    setDeletingTodoId(id);
     try {
       await axiosInstance.delete(`/todos/${id}`);
       setTodos(todos.filter(todo => todo.id !== id));
-      alert('Todo deleted! 🌑');
+      showToast('Todo deleted!', 'success');
     } catch (error) {
       console.error('Error deleting todo:', error);
-      alert('Error deleting todo.');
+      showToast('Error deleting todo.', 'error');
+    } finally {
+      setDeletingTodoId(null);
     }
   };
 
@@ -197,8 +217,9 @@ export function TodoPage() {
     setSelectedTodo(null);
   };
 
-  const handleLogout = () => {
-    if (window.confirm('Are you sure you want to logout?')) {
+  const handleLogout = async () => {
+    const ok = await showConfirm('Are you sure you want to logout?', 'Logout');
+    if (ok) {
       dispatch(logoutAction());
       setTodos([]);
       navigate('/');
@@ -211,7 +232,10 @@ export function TodoPage() {
 
     // Do not save Untitled
     if (!selectedTodo || selectedTodo.id === 'untitled') {
-      alert(pomodoroMode === 'work' ? '🎉 Pomodoro complete! Time for a break.' : '✨ Break over! Time to focus.');
+      showToast(
+        pomodoroMode === 'work' ? 'Pomodoro complete! Time for a break.' : 'Break over! Time to focus.',
+        pomodoroMode === 'work' ? 'success' : 'info'
+      );
 
       // Auto switch to break mode
       if (pomodoroMode === 'work') {
@@ -222,15 +246,18 @@ export function TodoPage() {
     }
 
     try {
-      console.log('🚀 Calling backend:', `/todos/${selectedTodo.id}/pomodoros`, { duration });
+      console.log('Calling backend:', `/todos/${selectedTodo.id}/pomodoros`, { duration });
 
       await axiosInstance.post(`/todos/${selectedTodo.id}/pomodoros`, {
         duration: duration
       });
 
-      alert(pomodoroMode === 'work'
-        ? `🎉 Pomodoro complete! ${duration} minutes recorded. Time for a break.`
-        : '✨ Break over! Time to focus.');
+      showToast(
+        pomodoroMode === 'work'
+          ? `Pomodoro complete! ${duration} minutes recorded. Time for a break.`
+          : 'Break over! Time to focus.',
+        pomodoroMode === 'work' ? 'success' : 'info'
+      );
 
       // Auto switch to break mode
       if (pomodoroMode === 'work') {
@@ -238,10 +265,13 @@ export function TodoPage() {
         setPomodoroTime(5 * 60);
       }
     } catch (error) {
-      console.error('❌ Error saving pomodoro:', error);
-      alert(pomodoroMode === 'work'
-        ? '🎉 Pomodoro complete! (Failed to save record)'
-        : '✨ Break over!');
+      console.error('Error saving pomodoro:', error);
+      showToast(
+        pomodoroMode === 'work'
+          ? 'Pomodoro complete! (Failed to save record)'
+          : 'Break over!',
+        'warning'
+      );
 
       // Switch to break even on error
       if (pomodoroMode === 'work') {
@@ -265,7 +295,6 @@ export function TodoPage() {
         });
       }, 1000);
     } else if (pomodoroTime === 0 && !isRunning) {
-      console.log('⏰ Timer complete! Sending to backend...');
       handlePomodoroComplete();
     }
     return () => clearInterval(interval);
@@ -290,11 +319,25 @@ export function TodoPage() {
     return [...todos].sort((a, b) => a.quadrant - b.quadrant);
   };
 
+  const renderSkeletonLoader = () => (
+    <div className="todo-list-loading">
+      {[1, 2, 3].map(i => (
+        <div key={i} className="skeleton-item">
+          <div className="skeleton-checkbox" />
+          <div className="skeleton-content">
+            <div className="skeleton-title" />
+            <div className="skeleton-badge" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
   return (
     <div className="todo-page">
       {/* Header */}
       <div className="todo-header">
-        <h1>📋 PhaseTheDay</h1>
+        <h1>🌙 PhaseTheDay</h1>
         <div className="header-actions">
           <button className="add-todo-btn" onClick={() => setShowAddModal(true)}>
             ➕ Add Todo
@@ -343,7 +386,9 @@ export function TodoPage() {
       {/* Todo List */}
       <div className="todo-list-container">
         <div className="todo-list">
-          {todos.length === 0 ? (
+          {isLoadingTodos ? (
+            renderSkeletonLoader()
+          ) : todos.length === 0 ? (
             <div className="empty-state" onClick={() => setShowAddModal(true)} style={{ cursor: 'pointer' }}>
               <p className="empty-icon">📝</p>
               <p className="empty-text">No todos found</p>
@@ -356,7 +401,6 @@ export function TodoPage() {
               </div>
               {getSortedTodos().map(todo => {
                 const quadrantInfo = getQuadrantInfo(todo.quadrant);
-                console.log('Todo:', todo); // for debugging
                 return (
                   <div key={todo.id} className="todo-list-item">
                     <div className="todo-item-main">
@@ -398,6 +442,7 @@ export function TodoPage() {
                       <button
                         className="delete-btn-list"
                         onClick={() => handleDeleteTodo(todo.id)}
+                        disabled={deletingTodoId === todo.id}
                         title="Delete"
                       >
                         🗑️
@@ -413,7 +458,7 @@ export function TodoPage() {
 
       {/* Add Todo Modal */}
       {showAddModal && (
-        <div className="modal-overlay" onClick={() => setShowAddModal(false)}>
+        <div className="modal-overlay" onClick={() => { setShowAddModal(false); setFormError(''); }}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h2>Add New Todo</h2>
 
@@ -423,7 +468,7 @@ export function TodoPage() {
                 type="text"
                 placeholder="Ex: Write project plan"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => { setTitle(e.target.value); setFormError(''); }}
                 className="todo-input"
                 autoFocus
               />
@@ -436,7 +481,7 @@ export function TodoPage() {
                   <button
                     key={quadrant.id}
                     className={`quadrant-option ${selectedQuadrant === quadrant.id ? 'selected' : ''}`}
-                    onClick={() => setSelectedQuadrant(quadrant.id)}
+                    onClick={() => { setSelectedQuadrant(quadrant.id); setFormError(''); }}
                     style={{
                       borderColor: selectedQuadrant === quadrant.id ? quadrant.color : '#e5e7eb'
                     }}
@@ -448,16 +493,19 @@ export function TodoPage() {
               </div>
             </div>
 
+            {formError && <div className="form-error">{formError}</div>}
+
             <div className="modal-actions">
               <button className="cancel-btn" onClick={() => {
                 setShowAddModal(false);
                 setTitle('');
                 setSelectedQuadrant(null);
+                setFormError('');
               }}>
                 Cancel
               </button>
-              <button className="confirm-btn" onClick={handleAddTodo}>
-                Add
+              <button className="confirm-btn" onClick={handleAddTodo} disabled={isAddingTodo}>
+                {isAddingTodo ? 'Adding...' : 'Add'}
               </button>
             </div>
           </div>
@@ -533,6 +581,8 @@ export function TodoPage() {
           </div>
         </div>
       )}
+
+      {ConfirmDialog}
     </div>
   );
 }
