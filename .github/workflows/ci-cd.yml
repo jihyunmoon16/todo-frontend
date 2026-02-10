@@ -8,7 +8,7 @@ on:
 
 env:
   NODE_VERSION: '20'
-  VM_HOST: phasetheday.me
+  VM_HOST: 20.189.117.68
   VM_USER: azureuser
   DEPLOY_PATH: /var/www/html
 
