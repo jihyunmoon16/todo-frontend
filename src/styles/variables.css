@@ -1,0 +1,167 @@
+:root {
+  /* Brand Colors from Style Guide */
+
+  /* Moonlight Charcoal - Backgrounds */
+  --bg-primary: #1A1A1D;
+  --bg-secondary: #232328;
+  --bg-tertiary: #2a2a30;
+  --bg-card: rgba(35, 35, 40, 0.7);
+  --bg-card-solid: #232328;
+
+  /* Warm Amber - Active Glows */
+  --moon-gold: #FFBF00;
+  --moon-amber: #E6AC00;
+  --moon-glow: rgba(255, 191, 0, 0.3);
+  --moon-glow-strong: rgba(255, 191, 0, 0.5);
+
+  /* Creamy Silk - Primary Text */
+  --moon-cream: #FFFDD0;
+  --text-primary: #FFFDD0;
+  --text-secondary: rgba(255, 253, 208, 0.7);
+  --text-muted: rgba(255, 253, 208, 0.5);
+
+  /* Midnight Void - Black Moon Icons */
+  --midnight-void: #0D0D0F;
+  --text-dark: #0D0D0F;
+
+  /* Accent Colors */
+  --accent-lavender: #9b8ab8;
+  --accent-blue: #5a6b8a;
+  --accent-success: #4ade80;
+  --accent-error: #f87171;
+  --accent-warning: #FFBF00;
+
+  /* Border Colors */
+  --border-gold: rgba(255, 191, 0, 0.3);
+  --border-gold-strong: rgba(255, 191, 0, 0.5);
+  --border-subtle: rgba(255, 253, 208, 0.1);
+  --border-card: rgba(255, 253, 208, 0.05);
+
+  /* Glassmorphism Effects */
+  --glass-blur: blur(10px);
+  --glass-blur-strong: blur(20px);
+  --glass-bg-subtle: rgba(35, 35, 40, 0.6);
+  --glass-bg-prominent: rgba(35, 35, 40, 0.8);
+
+  /* Spacing & Radius */
+  --card-radius: 16px;
+  --card-radius-lg: 24px;
+  --button-radius: 12px;
+  --input-radius: 8px;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px var(--moon-glow);
+  --shadow-glow-strong: 0 0 40px var(--moon-glow-strong);
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+
+  /* Layout */
+  --sidebar-width: 200px;
+  --timer-panel-width: 350px;
+  --header-height: 60px;
+
+  /* Z-index */
+  --z-sidebar: 100;
+  --z-modal: 1000;
+  --z-toast: 9999;
+}
+
+/* Animations */
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px var(--moon-glow);
+  }
+  50% {
+    box-shadow: 0 0 40px var(--moon-glow-strong);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes moonFlare {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.2);
+    filter: brightness(1.5);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+@keyframes cardFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}

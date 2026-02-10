@@ -4,34 +4,36 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
+  background: rgba(13, 13, 15, 0.8);
+  backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2000;
+  z-index: var(--z-modal, 2000);
   animation: confirmFadeIn 0.2s ease-out;
 }
 
 .confirm-card {
-  background: white;
-  border-radius: 1rem;
+  background: var(--bg-secondary, #232328);
+  border: 1px solid var(--border-gold, rgba(255, 191, 0, 0.3));
+  border-radius: var(--card-radius-lg, 24px);
   padding: 2rem;
   width: 90%;
   max-width: 400px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg, 0 8px 32px rgba(0, 0, 0, 0.5));
   animation: confirmSlideUp 0.3s ease-out;
 }
 
 .confirm-title {
   margin: 0 0 0.75rem 0;
-  color: #1f2937;
+  color: var(--text-primary, #FFFDD0);
   font-size: 1.25rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .confirm-message {
   margin: 0 0 1.5rem 0;
-  color: #6b7280;
+  color: var(--text-secondary, rgba(255, 253, 208, 0.7));
   font-size: 0.95rem;
   line-height: 1.5;
 }
@@ -44,31 +46,34 @@
 .confirm-cancel-btn,
 .confirm-ok-btn {
   flex: 1;
-  padding: 0.75rem;
+  padding: 0.875rem;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: var(--button-radius, 12px);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
-  font-size: 1rem;
+  transition: all var(--transition-fast, 0.15s ease);
+  font-size: 0.95rem;
 }
 
 .confirm-cancel-btn {
-  background-color: #f3f4f6;
-  color: #374151;
+  background: var(--bg-primary, #1A1A1D);
+  color: var(--text-secondary, rgba(255, 253, 208, 0.7));
+  border: 1px solid var(--border-subtle, rgba(255, 253, 208, 0.1));
 }
 
 .confirm-cancel-btn:hover {
-  background-color: #e5e7eb;
+  background: rgba(255, 253, 208, 0.05);
+  color: var(--text-primary, #FFFDD0);
 }
 
 .confirm-ok-btn {
-  background-color: #ef4444;
+  background: linear-gradient(135deg, var(--accent-error, #f87171), #dc2626);
   color: white;
 }
 
 .confirm-ok-btn:hover {
-  background-color: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(248, 113, 113, 0.3);
 }
 
 @keyframes confirmFadeIn {
@@ -84,5 +89,13 @@
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .confirm-card {
+    padding: 1.5rem;
+    border-radius: var(--card-radius, 16px);
   }
 }

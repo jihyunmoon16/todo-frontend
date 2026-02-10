@@ -1,23 +1,80 @@
-/* Remove default margins */
-* {
+/* Import CSS Variables (Design System) */
+@import './styles/variables.css';
+
+/* Reset and Base Styles */
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body {
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+html {
+  font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  background: var(--bg-primary, #1A1A1D);
+  color: var(--text-primary, #FFFDD0);
+  line-height: 1.5;
+}
+
 #root {
-  margin: 0;
-  padding: 0;
   width: 100%;
   min-height: 100vh;
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid var(--moon-gold, #FFBF00);
+  outline-offset: 2px;
+}
+
+/* Selection */
+::selection {
+  background: var(--moon-glow, rgba(255, 191, 0, 0.3));
+  color: var(--text-primary, #FFFDD0);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary, #1A1A1D);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-subtle, rgba(255, 253, 208, 0.1));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-gold, rgba(255, 191, 0, 0.3));
+}
+
+/* Links */
+a {
+  color: var(--moon-gold, #FFBF00);
+  text-decoration: none;
+  transition: color var(--transition-fast, 0.15s ease);
+}
+
+a:hover {
+  color: var(--moon-cream, #FFFDD0);
+}
+
+/* Buttons reset */
+button {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
 }

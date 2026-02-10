@@ -1,0 +1,56 @@
+.moon-phase {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.moon-glow {
+  filter: drop-shadow(0 0 8px rgba(255, 191, 0, 0.3));
+}
+
+.moon-full.moon-glow {
+  filter: drop-shadow(0 0 12px rgba(255, 191, 0, 0.5));
+}
+
+/* Animation for completed tasks */
+.moon-phase.completing {
+  animation: moonFlare 0.5s ease-out;
+}
+
+@keyframes moonFlare {
+  0% {
+    transform: scale(1);
+    filter: brightness(1) drop-shadow(0 0 8px rgba(255, 191, 0, 0.3));
+  }
+  50% {
+    transform: scale(1.3);
+    filter: brightness(1.5) drop-shadow(0 0 20px rgba(255, 191, 0, 0.5));
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1) drop-shadow(0 0 8px rgba(255, 191, 0, 0.3));
+  }
+}
+
+/* Timer moon specific styles */
+.moon-timer {
+  filter: drop-shadow(0 0 30px rgba(255, 191, 0, 0.5));
+}
+
+/* Hover effect */
+.moon-phase-clickable {
+  cursor: pointer;
+  transition: transform var(--transition-fast, 0.15s ease),
+              filter var(--transition-fast, 0.15s ease);
+}
+
+.moon-phase-clickable:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 12px rgba(255, 191, 0, 0.5));
+}
+
+/* Selected state for priority selector */
+.moon-phase-selected {
+  filter: drop-shadow(0 0 15px rgba(255, 191, 0, 0.5));
+  transform: scale(1.1);
+}

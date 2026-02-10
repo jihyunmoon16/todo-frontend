@@ -5,7 +5,7 @@ const loadTokenFromStorage = () => {
   try {
     const token = localStorage.getItem('authToken');
     return token || null;
-  } catch (error) {
+  } catch {
     return null;
   }
 };
